@@ -14,7 +14,7 @@ public class UpdatePlayer : MonoBehaviour
 
     IEnumerator UpdatePlayerCoroutine(string name)
     {
-        UnityWebRequest www = UnityWebRequest.Get("https://localhost:44330/api/SetPlayer?WhichPlayer=" + name);
+        UnityWebRequest www = UnityWebRequest.Get("https://localhost:44335/api/SetPlayer?name=" + name);
         yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success)
