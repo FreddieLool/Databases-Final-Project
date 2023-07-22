@@ -10,18 +10,21 @@ public class QuestionManager : MonoBehaviour
     [SerializeField] TMPro.TMP_Text Ans2_text;
     [SerializeField] TMPro.TMP_Text Ans3_text;
     [SerializeField] TMPro.TMP_Text Ans4_text;
+    int correctID;
+    int whichQuestion = 1;
 
     // Start is called before the first frame update
     void Start()
     {
 
-        StartCoroutine(GetQuestion(1));
+        StartCoroutine(GetQuestion(whichQuestion));
     }
 
 
     IEnumerator GetQuestion(int id)
     {
         UnityWebRequest www = UnityWebRequest.Get("https://localhost:44335/api/GetQuestion/" + id);
+        whichQuestion++;
         yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success)
@@ -42,8 +45,23 @@ public class QuestionManager : MonoBehaviour
                 Ans2_text.text = question.ans2;
                 Ans3_text.text = question.ans3;
                 Ans4_text.text = question.ans4;
+                correctID = question.correctID;
                 Debug.Log(question.correctID.ToString());
             }
+        }
+    }
+
+    public void CheckQuestion()
+    {
+        if (ButtonReciever.ClickedButtonName == correctID.ToString())
+        {
+            Debug.Log("GOOD JOB!!!!1");
+            //add score to player LET'S GO
+            StartCoroutine(GetQuestion(whichQuestion));
+        }
+        else
+        {
+            Debug.Log("Wrong Answer");
         }
     }
 }
