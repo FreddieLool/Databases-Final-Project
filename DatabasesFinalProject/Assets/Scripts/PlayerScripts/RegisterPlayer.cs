@@ -1,15 +1,20 @@
 using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
-using TMPro;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
+[RequireComponent(typeof(ConnectPlayers))]
 public class RegisterPlayer : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI InputField;
     string player_name;
-    int player_id = 1;
+    public int player_id = 0;
+    ConnectPlayers connectPlayers;
+
+    private void Start()
+    {
+        connectPlayers = GetComponent<ConnectPlayers>();
+    }
     public void UpdatePlayerFunc()
     {
         player_name = InputField.text;
@@ -17,10 +22,14 @@ public class RegisterPlayer : MonoBehaviour
         if (ButtonReciever.ClickedButtonName == "Player1")
         {
             player_id = 1;
+            connectPlayers.SetPlayerConnection(1, player_id);
+            Debug.Log("Player1");
         }
         else
         {
             player_id = 2;
+            connectPlayers.SetPlayerConnection(1, player_id);
+            Debug.Log("Player2");
         }
         StartCoroutine(UpdatePlayerCoroutine(player_name, player_id));
     }
