@@ -6,10 +6,16 @@ using UnityEngine.Networking;
 [RequireComponent(typeof(ConnectPlayers))]
 public class RegisterPlayer : MonoBehaviour
 {
+    [SerializeField] GameObject RegisterPlayerManager;
     [SerializeField] TextMeshProUGUI InputField;
     string player_name;
     public int player_id = 0;
     ConnectPlayers connectPlayers;
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(RegisterPlayerManager);
+    }
 
     private void Start()
     {

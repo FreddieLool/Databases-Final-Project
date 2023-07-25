@@ -1,18 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class ScoreManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public void SetPlayerScore(int score, int ID)
     {
-        
+        SetScoreCoroutine(score, ID);
     }
 
-    // Update is called once per frame
-    void Update()
+
+
+    IEnumerator SetScoreCoroutine(int score, int ID)
     {
-        
+        UnityWebRequest www = UnityWebRequest.Get("https://localhost:44335/api/SetScore?score=" + score + "&ID=" + ID);
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.Log(www.error);
+        }
+        else
+        {
+            // Show results as text
+            Debug.Log(www.downloadHandler.text);
+        }
     }
 }
