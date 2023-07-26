@@ -7,15 +7,17 @@ public class GetScore : MonoBehaviour
 {
     int score = 0;
 
-    public void GetPlayerScore(int ID)
+    public int GetPlayerScore(int ID)
     {
         GetScoreCoroutine(ID);
+        return score;
     }
 
 
 
     IEnumerator GetScoreCoroutine(int ID)
     {
+        score = 0;
         UnityWebRequest www = UnityWebRequest.Get("https://localhost:44335/api/score/" + ID);
         yield return www.SendWebRequest();
 

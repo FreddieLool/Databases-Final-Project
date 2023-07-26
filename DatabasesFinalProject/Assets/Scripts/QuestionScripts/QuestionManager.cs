@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
+using System.Diagnostics;
 
 public class QuestionManager : MonoBehaviour
 {
@@ -20,6 +21,10 @@ public class QuestionManager : MonoBehaviour
     int whichQuestion = 1;
     int playerOneScore = 0;
     int playerTwoScore = 0;
+    Stopwatch answerTimer = new Stopwatch();
+    float answerMill = 10000;
+    float baseScore = 1000;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -28,7 +33,14 @@ public class QuestionManager : MonoBehaviour
         scoreManager = GetComponent<ScoreManager>();    
         StartCoroutine(GetQuestion(whichQuestion));
         playerOneScore =  getScore.GetPlayerScore(1);
+    }
 
+    private void Update()
+    {
+        if(answerMill <= answerTimer.ElapsedMilliseconds)
+        {
+            // go to the next question.
+        }
     }
 
 
@@ -40,15 +52,17 @@ public class QuestionManager : MonoBehaviour
 
         if (www.result != UnityWebRequest.Result.Success)
         {
-            Debug.Log(www.error);
+            UnityEngine.Debug.Log(www.error);
         }
         else
         {
             // Show results as text
-            Debug.Log(www.downloadHandler.text);
+            UnityEngine.Debug.Log(www.downloadHandler.text);
 
 
             Question question = JsonUtility.FromJson<Question>(www.downloadHandler.text);
+            if (!answerTimer.IsRunning) { answerTimer.Start(); }
+
             if (question != null)
             {
                 Question_text.text = question.text;
@@ -57,7 +71,7 @@ public class QuestionManager : MonoBehaviour
                 Ans3_text.text = question.ans3;
                 Ans4_text.text = question.ans4;
                 correctID = question.correctID;
-                Debug.Log(question.correctID.ToString());
+                UnityEngine.Debug.Log(question.correctID.ToString());
             }
         }
     }
@@ -66,12 +80,16 @@ public class QuestionManager : MonoBehaviour
     {
         if (ButtonReciever.ClickedButtonName == correctID.ToString())
         {
+            answerTimer.Stop();
+            playerOneScore += (int)(baseScore * (answerMill - answerTimer.ElapsedMilliseconds)/answerMill);
+            answerTimer.Reset();
+
             src.clip = RightAnswer;
             src.Play();
             switch (rp.player_id)
             {
                 case 1:
-                    scoreManager.SetPlayerScore();
+                    //scoreManager.SetPlayerScore();
                     break;
                 case 2:
                     break;
@@ -79,7 +97,7 @@ public class QuestionManager : MonoBehaviour
                     break;
             }
 
-            Debug.Log("GOOD JOB!!!!1");
+            UnityEngine.Debug.Log("GOOD JOB!!!!1");
             //add score to player LET'S GO
             StartCoroutine(GetQuestion(whichQuestion));
         }
@@ -87,7 +105,7 @@ public class QuestionManager : MonoBehaviour
         {
             src.clip = WrongAnswer;
             src.Play();
-            Debug.Log("Wrong Answer");
+            UnityEngine.Debug.Log("Wrong Answer");
         }
     }
 }
